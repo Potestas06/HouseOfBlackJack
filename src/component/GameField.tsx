@@ -55,7 +55,7 @@ export default function GameField() {
         while (botTotal < playerTotal && botTotal < 21) {
             let card = await pullCard();
             tempBotHand.push(card);
-            botTotal = calculateHandValue(botHand);
+            botTotal = calculateHandValue(tempBotHand);
         }
         setBotHand([...tempBotHand]);
     }
