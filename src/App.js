@@ -2,17 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
 
-import LoggedInSpace from "./Components/LoggedInSpace.tsx";
 import Login from "./Components/Login.tsx";
 import SignUp from "./Components/SignUp.tsx";
-import Home from "./Components/Home.tsx";
 import { auth } from "./Firebase";
 
 const AppRoutes = ({ user }) => {
   const routes = useRoutes([
     {
       path: "/",
-      element: user ? <Navigate to="/loggedInSpace" /> : <Home />,
+      element: user ? <Navigate to="/loggedInSpace" /> : <p>Home screen</p>,
     },
     {
       path: "/login",
@@ -24,7 +22,7 @@ const AppRoutes = ({ user }) => {
     },
     {
       path: "/loggedInSpace",
-      element: user ? <LoggedInSpace /> : <Navigate to="/" />,
+      element: user ? <p>U are Now Logged In</p>: <Navigate to="/" />,
     },
     {
       path: "*",
