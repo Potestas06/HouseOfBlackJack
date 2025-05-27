@@ -1,6 +1,5 @@
-// App.tsx
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
+import { BrowserRouter, useRoutes } from "react-router-dom";
 
 import AuthPage from "./Pages/AuthPage.tsx";
 import ProtectedRoute from "./Components/MiddleWare.tsx";
@@ -11,15 +10,11 @@ import { auth } from "./Firebase";
 const AppRoutes = ({ user }) => {
   const routes = useRoutes([
     {
-      path: "/",
-      element: <Navigate to={user ? "/loggedInSpace" : "/auth"} />,
-    },
-    {
       path: "/auth",
-      element: user ? <Navigate to="/loggedInSpace" /> : <AuthPage />,
+      element: <AuthPage />,
     },
     {
-      path: "/loggedInSpace",
+      path: "/",
       element: (
         <ProtectedRoute user={user}>
           <HomePage />
@@ -28,9 +23,14 @@ const AppRoutes = ({ user }) => {
     },
     {
       path: "*",
-      element: <Navigate to="/" />,
+      element: (
+        <ProtectedRoute user={user}>
+          <HomePage />
+        </ProtectedRoute>
+      ),
     },
   ]);
+
   return routes;
 };
 
