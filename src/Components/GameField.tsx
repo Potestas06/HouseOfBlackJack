@@ -33,8 +33,8 @@ function calculateHandValue(hand: string[]) {
 export default function GameField() {
     const [cardService] = useState<DeckOfCardsService>(new DeckOfCardsService())
     const [gameState, setGameState] = useState<GameState>('beginning')
-    const [playerHand, setPlayerHand] = useState([])
-    const [botHand, setBotHand] = useState([])
+    const [playerHand, setPlayerHand] = useState<string[]>([])
+    const [botHand, setBotHand] = useState<string[]>([])
 
     async function pullCard() {
         return (await cardService.drawCards(1)).cards[0].code;
