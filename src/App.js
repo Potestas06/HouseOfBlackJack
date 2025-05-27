@@ -2,34 +2,35 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
 
-import Login from "./Components/Login.tsx";
-import SignUp from "./Components/SignUp.tsx";
+import AuthPage from "./Pages/AuthPage.tsx";
+import ProtectedRoute from "./Components/MiddleWare.tsx";
+import HomePage from "./Pages/HomePage.tsx";
+
 import { auth } from "./Firebase";
 
 const AppRoutes = ({ user }) => {
   const routes = useRoutes([
     {
       path: "/",
-      element: user ? <Navigate to="/loggedInSpace" /> : <p>Home screen</p>,
+      element: <Navigate to={user ? "/loggedInSpace" : "/auth"} />,
     },
     {
-      path: "/login",
-      element: user ? <Navigate to="/loggedInSpace" /> : <Login />,
-    },
-    {
-      path: "/signup",
-      element: user ? <Navigate to="/loggedInSpace" /> : <SignUp />,
+      path: "/auth",
+      element: user ? <Navigate to="/loggedInSpace" /> : <AuthPage />,
     },
     {
       path: "/loggedInSpace",
-      element: user ? <p>U are Now Logged In</p>: <Navigate to="/" />,
+      element: (
+        <ProtectedRoute user={user}>
+          <HomePage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "*",
       element: <Navigate to="/" />,
     },
   ]);
-
   return routes;
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
-import Login from "../Components/Login.tsx";
-import SignUp from "../Components/SingUp.tsx";
+import Login from "../Components/SignIn.tsx";
+import SignUp from "../Components/SignUp.tsx";
 import SignInWithGoogle from "../Components/GoogleLogin.tsx";
 
 interface AuthPageState {
