@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import * as React from "react";
-import DeckOfCardsService from "./DeckOfCardsService.ts";
+import DeckOfCardsService from "./DeckOfCardsService.tsx";
 
 type GameState = "beginning"|"playerRound"|"botRound"|"win"|"lost"|"tie"
 
