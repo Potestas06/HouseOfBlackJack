@@ -36,11 +36,19 @@ const AppRoutes = ({ user }) => {
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(setUser);
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      setUser(authUser);
+      setLoading(false);
+    });
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <BrowserRouter>

@@ -1,4 +1,3 @@
-// SignUp.tsx
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../Firebase";
@@ -14,12 +13,7 @@ const SignUp: React.FC = () => {
     e.preventDefault();
     setError(null);
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log(userCredential.user);
+      await createUserWithEmailAndPassword(auth, email, password);
       setShowModal(true);
       setTimeout(() => {
         window.location.href = "/";
