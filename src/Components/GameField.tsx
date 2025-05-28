@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import * as React from "react";
 import DeckOfCardsService from "./DeckOfCardsService.tsx";
 
+
 type GameState = "beginning"|"playerRound"|"botRound"|"win"|"lost"|"tie"
 
 function calculateHandValue(hand: string[]) {
@@ -35,6 +36,7 @@ export default function GameField() {
     const [gameState, setGameState] = useState<GameState>('beginning')
     const [playerHand, setPlayerHand] = useState<string[]>([])
     const [botHand, setBotHand] = useState<string[]>([])
+
 
     async function pullCard() {
         return (await cardService.drawCards(1)).cards[0].code;
