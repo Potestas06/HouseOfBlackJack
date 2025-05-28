@@ -1,5 +1,5 @@
 import { Table, Form, Button } from 'react-bootstrap';
-import { useState } from "react";
+import React, { useState } from "react";
 
 const Scoreboard = () => {
     // Beispiel-Daten für die Spieler, mit festem Rank
