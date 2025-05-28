@@ -10,8 +10,7 @@ const SignInWithGoogle: React.FC = () => {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      console.log(result.user);
+      await signInWithPopup(auth, provider);
       setShowModal(true);
       setTimeout(() => {
         window.location.href = "/";

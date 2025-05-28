@@ -1,10 +1,9 @@
-// Login.tsx
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../Firebase";
+import { auth } from "../Firebase.js";
 import MessageModal from "./MessageModal.tsx";
 
-const Login: React.FC = () => {
+const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -14,12 +13,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError(null);
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log(userCredential.user);
+      await signInWithEmailAndPassword(auth, email, password);
       setShowModal(true);
       setTimeout(() => {
         window.location.href = "/";
@@ -68,4 +62,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default SignIn;
