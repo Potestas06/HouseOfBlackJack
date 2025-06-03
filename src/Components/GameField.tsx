@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import * as React from "react";
 import DeckOfCardsService from "../Services/DeckOfCardsService.tsx";
+import { auth } from "../Firebase";
+import { updateBalance, getLastBet, setLastBet } from "../Services/UserService.tsx";
 
 
 type GameState = "beginning"|"playerRound"|"botRound"|"win"|"lost"|"tie"
@@ -36,6 +38,19 @@ export default function GameField() {
     const [gameState, setGameState] = useState<GameState>('beginning')
     const [playerHand, setPlayerHand] = useState<string[]>([])
     const [botHand, setBotHand] = useState<string[]>([])
+    const [resultProcessed, setResultProcessed] = useState(false)
+    const [bet, setBet] = useState<number>(100)
+
+    useEffect(() => {
+        const loadBet = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const last = await getLastBet(user.uid);
+                setBet(last);
+            }
+        };
+        loadBet();
+    }, [])
 
 
     async function pullCard() {
@@ -88,8 +103,34 @@ export default function GameField() {
         }
     }, [playerHand, botHand, gameState]);
 
+    useEffect(() => {
+        if (!resultProcessed && ['win','lost','tie'].includes(gameState)) {
+            const user = auth.currentUser;
+            if (user) {
+                let delta = 0;
+                if (gameState === 'win') delta = bet;
+                if (gameState === 'lost') delta = -bet;
+                updateBalance(user.uid, delta);
+            }
+            setResultProcessed(true);
+        }
+    }, [gameState, resultProcessed]);
+
+    const handleBetChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newBet = parseInt(e.target.value);
+        setBet(newBet);
+        const user = auth.currentUser;
+        if (user) {
+            setLastBet(user.uid, newBet);
+        }
+    };
+
     return <div>
         <p>{gameState}</p>
+        <div>
+            <label>Bet: {bet}</label>
+            <input type="range" min="10" max="1000" step="10" value={bet} onChange={handleBetChange} />
+        </div>
         <p>Player hand:</p>{playerHand.join(', ')}
         <p>Player value: {calculateHandValue(playerHand)}</p>
         <p>Bot hand:</p>{botHand.join(', ')}
