@@ -114,7 +114,7 @@ export default function GameField() {
             }
             setResultProcessed(true);
         }
-    }, [gameState, resultProcessed]);
+    }, [gameState, resultProcessed, bet]);
 
     const handleBetChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const newBet = parseInt(e.target.value);
