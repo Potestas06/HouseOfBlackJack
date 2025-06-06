@@ -1,70 +1,116 @@
-# Getting Started with Create React App
+# HouseOfBlackJack
+<img src="https://github.com/user-attachments/assets/0745cea0-ea6c-4864-895f-f3cc227d2af9" alt="image" width="300">
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
 
-In the project directory, you can run:
 
-### `npm start`
+## Description
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+HouseOfBlackJack is a simple, web-based Blackjack game built with React and TypeScript. The goal is to provide players with a classic casino feel and implement the core rules of Blackjack in an interactive way.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+* Shuffle and deal cards
+* Player and dealer logic following traditional Blackjack rules
+* Display of score, bust status, and winner
+* Betting system (chips) with a basic wagering mechanism
+* Responsive design that runs in the browser
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Installation
 
-### `npm run build`
+1. Clone the repository:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   git clone https://github.com/Potestas06/HouseOfBlackJack.git
+   ```
+2. Change into the project directory:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   cd HouseOfBlackJack
+   ```
+3. Install dependencies:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```bash
+   npm install
+   ```
 
-### `npm run eject`
+   Or, if you use Yarn:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   ```bash
+   yarn
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Development
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+* **Start local development server:**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  ```bash
+  npm start
+  ```
 
-## Learn More
+  Then open `http://localhost:3000` in your browser. The page will reload automatically when you make code changes.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* **Run tests:**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  ```bash
+  npm test
+  ```
 
-### Code Splitting
+  Runs the built-in test runner in watch mode.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+* **Build for production:**
 
-### Analyzing the Bundle Size
+  ```bash
+  npm run build
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+  Creates an optimized production bundle in the `build` folder, which can be deployed.
 
-### Making a Progressive Web App
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+HouseOfBlackJack/
+├── public/              # Static files (HTML, icons)
+├── src/                 # Source code (components, styles, utilities)
+│   ├── components/      # Reusable React components
+│   ├── hooks/           # Custom React hooks
+│   ├── assets/          # Images, fonts, sounds
+│   ├── App.tsx          # Main entry point of the app
+│   ├── index.tsx        # Mounts React into the DOM
+│   └── ...              # Other files and folders
+├── .gitignore
+├── package.json
+└── README.md            # This file
+```
 
-### Advanced Configuration
+## Rules and Gameplay
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. At the start of the game, the player receives two cards and the dealer receives one face-up and one face-down card.
+2. The player can choose “Hit” (draw a card) or “Stand” (stop drawing cards).
+3. The goal is to get as close to 21 points as possible without going over (“bust”).
+4. The dealer follows fixed rules (must hit until at least 17 points).
+5. There is a betting system: the player starts with a predefined amount of chips and can place a bet before each round.
 
-### Deployment
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+1. Fork the repository.
+2. Create a new branch:
 
-### `npm run build` fails to minify
+   ```bash
+   git checkout -b feature/my-change
+   ```
+3. Commit your changes:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+   ```bash
+   git commit -m "My change"
+   ```
+4. Push to the upstream branch:
+
+   ```bash
+   git push origin feature/my-change
+   ```
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
