@@ -24,6 +24,7 @@ const App = () => {
   }
 
   return (
+
     <BrowserRouter>
       <Routes>
         <Route path="/auth" element={<AuthPage />} />

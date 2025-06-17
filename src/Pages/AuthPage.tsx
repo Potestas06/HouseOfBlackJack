@@ -1,7 +1,8 @@
-import React from "react";
-import Login from "../Components/SignIn.tsx";
-import SignUp from "../Components/SignUp.tsx";
-import SignInWithGoogle from "../Components/GoogleLogin.tsx";
+import * as React from "react";
+
+import SignInWithGoogle from '../Components/GoogleLogin.tsx';
+import SignUp from "./SignUp.tsx";
+import SignIn from "./SignIn.tsx";
 
 interface AuthPageState {
   isLogin: boolean;
@@ -33,7 +34,7 @@ class AuthPage extends React.Component<{}, AuthPageState> {
           {isLogin ? "Sign in" : "Sign up"}
         </h2>
         <p style={{ marginBottom: "24px", color: "#555" }}>Gambling 4 life</p>
-        {isLogin ? <Login /> : <SignUp />}
+        {isLogin ? <SignIn /> : <SignUp />}
         <div style={{ textAlign: "center", margin: "16px 0" }}>or</div>
         <div
           style={{
