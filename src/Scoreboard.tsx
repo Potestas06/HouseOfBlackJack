@@ -28,7 +28,7 @@ const Scoreboard = () => {
           {users.map((user, index) => (
             <tr key={user.id}>
               <td>{index + 1}</td>
-              <td>{user.email}</td>
+              <td>{user.username || user.email}</td>
               <td>{user.balance}</td>
             </tr>
           ))}

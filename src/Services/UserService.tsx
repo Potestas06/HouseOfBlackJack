@@ -17,7 +17,16 @@ export const ensureUserDocument = async (user: any) => {
   try {
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      await setDoc(ref, { balance: 2000, email: user.email, lastBet: 100 });
+      await setDoc(ref, {
+        balance: 2000,
+        email: user.email,
+        username: user.displayName || user.email?.split("@")[0] || "Anonymous",
+        lastBet: 100,
+      });
+    } else if (!snap.data().username) {
+      await updateDoc(ref, {
+        username: user.displayName || user.email?.split("@")[0] || "Anonymous",
+      });
     }
   } catch (e) {
     console.error("ensureUserDocument", e);
