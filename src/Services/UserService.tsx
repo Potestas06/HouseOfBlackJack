@@ -33,13 +33,16 @@ export const ensureUserDocument = async (user: any) => {
   }
 };
 
-export const updateBalance = async (user: any, delta: number) => {
-  if (!user) return;
-  const ref = doc(db, "users", user.uid);
+export const updateBalance = async (uid: string, delta: number) => {
+  if (!uid) return;
+  const ref = doc(db, "users", uid);
   try {
     await updateDoc(ref, { balance: increment(delta) });
   } catch (e) {
-    await ensureUserDocument(user);
+    // create the doc if it doesn't exist
+    await setDoc(ref, {
+      balance: 2000 + delta,
+    }, { merge: true });
     try {
       await updateDoc(ref, { balance: increment(delta) });
     } catch (err) {
@@ -74,13 +77,13 @@ export const getLastBet = async (uid: string): Promise<number> => {
   return 100;
 };
 
-export const setLastBet = async (user: any, bet: number) => {
-  if (!user) return;
-  const ref = doc(db, "users", user.uid);
+export const setLastBet = async (uid: string, bet: number) => {
+  if (!uid) return;
+  const ref = doc(db, "users", uid);
   try {
     await updateDoc(ref, { lastBet: bet });
   } catch (e) {
-    await ensureUserDocument(user);
+    await setDoc(ref, { lastBet: bet }, { merge: true });
     try {
       await updateDoc(ref, { lastBet: bet });
     } catch (err) {
