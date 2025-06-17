@@ -110,11 +110,11 @@ export default function GameField() {
                 let delta = 0;
                 if (gameState === 'win') delta = bet;
                 if (gameState === 'lost') delta = -bet;
-                updateBalance(user.uid, delta);
+                updateBalance(user, delta);
             }
             setResultProcessed(true);
         }
-    }, [gameState, resultProcessed, bet]);
+            setLastBet(user, newBet);
 
     const handleBetChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const newBet = parseInt(e.target.value);
