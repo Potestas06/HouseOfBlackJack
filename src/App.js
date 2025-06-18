@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import AuthPage from "./Pages/AuthPage.tsx";
-import ProtectedRoute from "./Components/MiddleWare.tsx";
-import HomePage from "./Pages/HomePage.tsx";
+import AuthPage from "./Pages/AuthPage";
+import ProtectedRoute from "./Components/MiddleWare";
+import HomePage from "./Pages/HomePage";
 
 import { auth } from "./Firebase";
 

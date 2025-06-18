@@ -1,7 +1,7 @@
 import React from "react";
-import Login from "../Components/SignIn.tsx";
-import SignUp from "../Components/SignUp.tsx";
-import SignInWithGoogle from "../Components/GoogleLogin.tsx";
+import Login from "../Components/SignIn";
+import SignUp from "../Components/SignUp";
+import SignInWithGoogle from "../Components/GoogleLogin";
 
 interface AuthPageState {
   isLogin: boolean;
