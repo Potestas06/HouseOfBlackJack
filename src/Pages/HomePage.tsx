@@ -1,7 +1,7 @@
-import { useState } from "react";
-import GameField from "./GameField.tsx";
-import Home from "../Components/Home.tsx";
-import LogoutButton from "../Components/LogoutButton.tsx";
+import React, { useState } from "react";
+import Home from "../Components/Home";
+import GameField from "../Components/GameField";
+import LogoutButton from "../Components/LogoutButton";
 
 const HomePage: React.FC = () => {
   const [showGame, setShowGame] = useState(false);

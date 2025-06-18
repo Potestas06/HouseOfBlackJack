@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import GoogleButton from "react-google-button";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../Firebase";
-import MessageModal from "./MessageModal.tsx";
+import MessageModal from "./MessageModal";
 
 const SignInWithGoogle: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
