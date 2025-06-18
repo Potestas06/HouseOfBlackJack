@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Home from "../Components/Home.tsx";
 import GameField from "../Components/GameField.tsx";
 import LogoutButton from "../Components/LogoutButton.tsx";
 
 const HomePage: React.FC = () => {
   const [showGame, setShowGame] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -23,6 +25,11 @@ const HomePage: React.FC = () => {
           onClick={() => setShowGame((prev) => !prev)}
         >
           {showGame ? "Back to Home" : "Go to Gamefield"}
+        </button>
+      </div>
+      <div style={{ textAlign: "center", marginTop: "16px" }}>
+        <button className="btn btn-secondary" onClick={() => navigate('/scoreboard')}>
+          Scoreboard
         </button>
       </div>
       <div style={{ textAlign: "center", marginTop: "16px" }}>
