@@ -82,27 +82,7 @@ export default function GameField() {
 
         return (
             <>
-                {/* Burger Menu */}
-                <div style={{ position: 'absolute', top: 20, right: 20 }}>
-                    {/* ... */}
-                </div>
 
-                {/* Bot Info oben Mitte */}
-                <div style={{ position: 'absolute', top: 20, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
-                    {/* ... */}
-                </div>
-
-                {/* Player Info unten Mitte */}
-                <div style={{ position: 'absolute', bottom: 80, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
-                    {/* ... */}
-                </div>
-
-                {/* Buttons unten rechts */}
-                {gameState === "playerRound" && (
-                    <div style={{ position: 'absolute', bottom: 20, right: 20, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {/* ... */}
-                    </div>
-                )}
             </>
         );
     }

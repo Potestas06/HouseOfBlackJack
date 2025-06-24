@@ -24,7 +24,7 @@ const Scoreboard = () => {
     const [sortByName, setSortByName] = useState(true); // Für Sortierung nach Namen A-Z oder Z-A
 
     // Handle Filteränderung
-    const handleFilterChange = (e) => {
+    const handleFilterChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setFilter(e.target.value);
     };
 
