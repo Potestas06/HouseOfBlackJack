@@ -10,8 +10,7 @@ import {
     TableBody,
     Button,
     Paper,
-    TextField,
-    IconButton
+    TextField
 } from "@mui/material";
 import { ExpandMore, ExpandLess, ArrowDownward, ArrowUpward, SortByAlpha } from "@mui/icons-material";
 
@@ -62,7 +61,7 @@ const Scoreboard: React.FC = () => {
         );
     }
 
-    const usersToShow = expanded ? filteredUsers : filteredUsers.slice(0, 5);
+    const usersToShow = expanded ? filteredUsers : filteredUsers.slice(0, 3);
 
     return (
         <Box>
