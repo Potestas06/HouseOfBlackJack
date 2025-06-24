@@ -89,7 +89,6 @@ const HomePage: React.FC = () => {
                 </>
             )}
 
-            {/* Hamburger-Menü oben rechts im Game-Modus */}
             {showGame && (
                 <Box sx={{ position: "absolute", top: "1rem", right: "1rem" }}>
                     <Tooltip title="Menü öffnen">
