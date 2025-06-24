@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as React from "react";
 import DeckOfCardsService from "../Services/DeckOfCardsService";
-import Scoreboard from "../Components/Scoreboard"; // Stelle sicher, dass dein Scoreboard importiert wird
+import Scoreboard from "../Components/Scoreboard";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
 type GameState = "beginning" | "playerRound" | "botRound" | "win" | "lost" | "tie";
@@ -39,6 +39,7 @@ export default function GameField() {
     const [betPlaced, setBetPlaced] = useState(false);
     const [betInput, setBetInput] = useState("");
     const [betAmount, setBetAmount] = useState(0);
+    const [amount, setAmount] = useState(100);
 
     async function pullCard() {
         return (await cardService.drawCards(1)).cards[0].code;
@@ -68,15 +69,24 @@ export default function GameField() {
         setBetPlaced(false);
         setBetInput("");
         setBetAmount(0);
+        if (amount === 0) {
+            setAmount(100);
+        }
     };
 
     const handleBet = async () => {
-        setBetAmount(Number(betInput));
-        setBetPlaced(true);
-        await cardService.createDeck();
-        setPlayerHand([await pullCard(), await pullCard()]);
-        setBotHand([await pullCard(), await pullCard()]);
-        setGameState("playerRound");
+        const parsedBet = Number(betInput);
+        if (parsedBet > 0 && parsedBet <= amount) {
+            setAmount(prev => prev - parsedBet);
+            setBetAmount(parsedBet);
+            setBetPlaced(true);
+            await cardService.createDeck();
+            setPlayerHand([await pullCard(), await pullCard()]);
+            setBotHand([await pullCard(), await pullCard()]);
+            setGameState("playerRound");
+        } else {
+            alert("Ungültiger Einsatz.");
+        }
     };
 
     useEffect(() => {
@@ -107,24 +117,24 @@ export default function GameField() {
                 position: 'absolute',
                 top: 16,
                 left: 16,
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 borderRadius: 2,
                 padding: 1,
             }}>
                 <Scoreboard />
             </Box>
 
-            {/* Zentrum: Spieltitel + Einsatz */}
+            {/* Zentrum: Einsatzanzeige */}
             <Box sx={{
                 flexGrow: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
+                justifyContent: 'end',
                 alignItems: 'center',
+                marginBottom: "1rem"
             }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>Gamefield (Blackjack)</Typography>
                 {betPlaced && (
-                    <Typography sx={{ mt: 2, fontSize: '1.2rem' }}>
+                    <Typography sx={{ mt: 2, fontSize: '2rem' }}>
                         Einsatz: {betAmount}
                     </Typography>
                 )}
@@ -134,23 +144,25 @@ export default function GameField() {
             <Box sx={{
                 width: '100%',
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                padding: 2,
+                padding: 3,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
             }}>
                 {/* Links: Eingabe, Bet, Money */}
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <Typography>Money: 100</Typography>
+                    <Typography sx={{ mt: 2, fontSize: '2rem' }}>Money: {amount}</Typography>
 
                     {!betPlaced && (
                         <>
                             <TextField
                                 variant="outlined"
-                                size="small"
+                                size="medium"
                                 placeholder="Eingabe"
+                                type="number"
                                 value={betInput}
                                 onChange={(e) => setBetInput(e.target.value)}
+                                inputProps={{ min: 1, max: amount }}
                                 sx={{
                                     input: { color: 'white' },
                                     '& .MuiOutlinedInput-root': {
@@ -162,46 +174,81 @@ export default function GameField() {
                                 }}
                             />
                             <Button
-                                variant="contained"
-                                color="secondary"
                                 onClick={handleBet}
-                            >
-                                Bet
-                            </Button>
+                                disabled={Number(betInput) <= 0 || Number(betInput) > amount}
+                                sx={{
+                                    opacity: Number(betInput) > amount ? 0.4 : 1,
+                                    width: 130,
+                                    height: 130,
+                                    borderRadius: '50%',
+                                    minWidth: 0,
+                                    padding: 0,
+                                    backgroundImage: 'url(/blueChip.png)',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                }}
+                            />
                         </>
                     )}
                 </Box>
-
-                {/* Mitte: leer oder Einsatz wird oben gezeigt */}
 
                 {/* Rechts: Buttons */}
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     {betPlaced && (gameState === "playerRound") && (
                         <>
                             <Button
-                                variant="contained"
                                 onClick={onHit}
-                                sx={{ borderRadius: '50%' }}
-                            >
-                                Hit
-                            </Button>
+                                sx={{
+                                    width: 130,
+                                    height: 130,
+                                    borderRadius: '50%',
+                                    minWidth: 0,
+                                    padding: 0,
+                                    backgroundImage: 'url(/greenChip.png)',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                }}
+                            />
                             <Button
-                                variant="contained"
                                 onClick={onStand}
-                                sx={{ borderRadius: '50%' }}
-                            >
-                                Stand
-                            </Button>
+                                sx={{
+                                    width: 130,
+                                    height: 130,
+                                    borderRadius: '50%',
+                                    minWidth: 0,
+                                    padding: 0,
+                                    backgroundImage: 'url(/redChip.png)',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                }}
+                            />
                         </>
                     )}
                     {(gameState === "win" || gameState === "lost" || gameState === "tie") && (
-                        <Button
-                            variant="outlined"
-                            onClick={startNewGame}
-                            sx={{ ml: 2 }}
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                bottom: 'calc(3rem + 130px + 1rem)', // 3rem Padding + Button-Höhe + Abstand
+                                right: '1rem',
+                            }}
                         >
-                            New Game
-                        </Button>
+                            <Button
+                                onClick={startNewGame}
+                                sx={{
+                                    width: 130,
+                                    height: 130,
+                                    borderRadius: '50%',
+                                    minWidth: 0,
+                                    padding: 0,
+                                    backgroundImage: 'url(/blackChip.png)',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    fontSize: '1rem',
+                                }}
+                            />
+                        </Box>
                     )}
                 </Box>
             </Box>
