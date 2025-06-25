@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Box,
     Typography,
@@ -13,21 +13,24 @@ import {
     TextField
 } from "@mui/material";
 import { ExpandMore, ExpandLess, ArrowDownward, ArrowUpward, SortByAlpha } from "@mui/icons-material";
+import { db } from "../Firebase";
+import { ref, onValue } from "firebase/database";
 
 const Scoreboard: React.FC = () => {
-    const usersData = [
-        { id: 1, rank: 1, name: 'Mike Koala', score: 95 },
-        { id: 2, rank: 2, name: 'Gina Kangaroo', score: 92 },
-        { id: 3, rank: 3, name: 'Sally Tortoise', score: 86 },
-        { id: 4, rank: 4, name: 'Kim Lobster', score: 67 },
-        { id: 5, rank: 5, name: 'Peter Rabbit', score: 56 },
-        { id: 6, rank: 6, name: 'Frank Leopard', score: 43 },
-        { id: 7, rank: 7, name: 'Mary Hyena', score: 34 },
-        { id: 8, rank: 8, name: 'Caroline Bear', score: 32 },
-        { id: 9, rank: 9, name: 'Tom Eagle', score: 24 },
-        { id: 10, rank: 10, name: 'Jim Unicorn', score: 11 },
-        { id: 11, rank: 11, name: 'Player 1', score: 0 }
-    ];
+    const [usersData, setUsersData] = useState<{id:string;name:string;balance:number;}[]>([]);
+
+    useEffect(() => {
+        const r = ref(db, 'users');
+        onValue(r, snap => {
+            const list: {id:string;name:string;balance:number;}[] = [];
+            snap.forEach(c => {
+                const v = c.val();
+                list.push({ id: c.key!, name: v.name || c.key, balance: v.balance || 0 });
+            });
+            list.sort((a,b) => b.balance - a.balance);
+            setUsersData(list);
+        });
+    }, []);
 
     const [expanded, setExpanded] = useState(false);
     const [filter, setFilter] = useState('');
@@ -57,7 +60,7 @@ const Scoreboard: React.FC = () => {
         );
     } else {
         filteredUsers.sort((a, b) =>
-            sortAsc ? a.score - b.score : b.score - a.score
+            sortAsc ? a.balance - b.balance : b.balance - a.balance
         );
     }
 
@@ -90,7 +93,7 @@ const Scoreboard: React.FC = () => {
                     startIcon={sortAsc ? <ArrowUpward /> : <ArrowDownward />}
                     sx={{ color: "white", borderColor: "#aaa", fontSize: "0.75rem" }}
                 >
-                    Punkte
+                    Balance
                 </Button>
                 <Button
                     variant="outlined"
@@ -109,15 +112,15 @@ const Scoreboard: React.FC = () => {
                         <TableRow>
                             <TableCell sx={{ color: "#fff", width: "25%" }}>Rank</TableCell>
                             <TableCell sx={{ color: "#fff", width: "50%" }}>Name</TableCell>
-                            <TableCell sx={{ color: "#fff", width: "25%" }}>Score</TableCell>
+                            <TableCell sx={{ color: "#fff", width: "25%" }}>Balance</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {usersToShow.map((user) => (
+                        {usersToShow.map((user, idx) => (
                             <TableRow key={user.id}>
-                                <TableCell sx={{ color: "#fff" }}>{user.rank}</TableCell>
+                                <TableCell sx={{ color: "#fff" }}>{idx + 1}</TableCell>
                                 <TableCell sx={{ color: "#fff" }}>{user.name}</TableCell>
-                                <TableCell sx={{ color: "#fff" }}>{user.score}</TableCell>
+                                <TableCell sx={{ color: "#fff" }}>{user.balance}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

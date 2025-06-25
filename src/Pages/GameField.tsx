@@ -3,6 +3,8 @@ import * as React from "react";
 import DeckOfCardsService from "../Services/DeckOfCardsService";
 import Scoreboard from "../Components/Scoreboard";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { auth, db } from "../Firebase";
+import { ref, get, set, update, push } from "firebase/database";
 
 type GameState = "beginning" | "playerRound" | "botRound" | "win" | "lost" | "tie";
 
@@ -40,6 +42,24 @@ export default function GameField() {
     const [betInput, setBetInput] = useState("");
     const [betAmount, setBetAmount] = useState(0);
     const [amount, setAmount] = useState(100);
+    const [wins, setWins] = useState(0);
+    const [losses, setLosses] = useState(0);
+
+    useEffect(() => {
+        const uid = auth.currentUser?.uid;
+        if (!uid) return;
+        const userRef = ref(db, `users/${uid}`);
+        get(userRef).then(s => {
+            if (s.exists()) {
+                const data = s.val();
+                setAmount(data.balance ?? 100);
+                setWins(data.wins ?? 0);
+                setLosses(data.losses ?? 0);
+            } else {
+                set(userRef, { balance: 100, wins: 0, losses: 0, name: auth.currentUser?.email || uid });
+            }
+        });
+    }, []);
 
     async function pullCard() {
         return (await cardService.drawCards(1)).cards[0].code;
@@ -97,6 +117,31 @@ export default function GameField() {
         else if (playerValue > 21 || (botValue > playerValue && gameState === 'botRound')) setGameState('lost');
         else if (playerValue === botValue && gameState === 'botRound') setGameState('tie');
     }, [playerHand, botHand, gameState]);
+
+    useEffect(() => {
+        if (!betPlaced) return;
+        if (gameState === 'win' || gameState === 'lost' || gameState === 'tie') {
+            const uid = auth.currentUser?.uid;
+            if (!uid) return;
+            let newBalance = amount;
+            let newWins = wins;
+            let newLosses = losses;
+            if (gameState === 'win') {
+                newBalance += betAmount * 2;
+                newWins += 1;
+            } else if (gameState === 'tie') {
+                newBalance += betAmount;
+            } else {
+                newLosses += 1;
+            }
+            setAmount(newBalance);
+            setWins(newWins);
+            setLosses(newLosses);
+            const userRef = ref(db, `users/${uid}`);
+            update(userRef, { balance: newBalance, wins: newWins, losses: newLosses });
+            push(ref(db, `users/${uid}/history`), { ts: Date.now(), balance: newBalance });
+        }
+    }, [gameState]);
 
     return (
         <Box

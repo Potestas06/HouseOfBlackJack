@@ -128,6 +128,9 @@ const HomePage: React.FC = () => {
                         <MenuItem onClick={handleBackToHome}>
                             <Typography textAlign="center">Zurück zur Startseite</Typography>
                         </MenuItem>
+                        <MenuItem onClick={() => { window.location.href = '/account'; }}>
+                            <Typography textAlign="center">Account</Typography>
+                        </MenuItem>
                         <MenuItem onClick={handleLogOut}>
                             <Typography textAlign="center">Log out</Typography>
                         </MenuItem>
