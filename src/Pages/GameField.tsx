@@ -228,7 +228,7 @@ export default function GameField() {
                         <Box
                             sx={{
                                 position: 'absolute',
-                                bottom: 'calc(3rem + 130px + 1rem)', // 3rem Padding + Button-Höhe + Abstand
+                                bottom: '8rem', // 3rem Padding + Button-Höhe + Abstand
                                 right: '1rem',
                             }}
                         >
