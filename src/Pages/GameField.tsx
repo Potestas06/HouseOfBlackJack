@@ -6,7 +6,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { auth, db } from "../Firebase";
 import { ref, get, set, update, push } from "firebase/database";
 
-type GameState = "beginning" | "playerRound" | "botRound" | "win" | "lost" | "tie";
+type GameState = "beginning" | "ongoing" | "win" | "lost" | "tie";
 
 function calculateHandValue(hand: string[]) {
     let value = 0;
@@ -77,14 +77,14 @@ export default function GameField() {
         finishGame(amount + (betAmount * 2), wins, losses);
     }
 
-    function checkGameStatus(playerHand: string[], botHand: string[]) {
+    function checkGameStatus(playerHand: string[], botHand: string[], gameEnd: boolean = false) {
         const playerValue = calculateHandValue(playerHand);
         const botValue = calculateHandValue(botHand);
 
         const rules: [() => boolean, () => void][] = [
-            [() => botValue > 21, handleWin],
-            [() => playerValue > 21 || (gameState === 'botRound' && botValue > playerValue), handleLoss],
-            [() => gameState === 'botRound' && botValue === playerValue, handleTie],
+            [() => botValue > 21 || (gameEnd && playerValue > botValue), handleWin],
+            [() => playerValue > 21 || (gameEnd && botValue > playerValue), handleLoss],
+            [() => gameEnd && botValue === playerValue, handleTie],
         ];
 
         rules.find(([condition]) => condition())?.[1]();
@@ -118,18 +118,16 @@ export default function GameField() {
     }
 
     async function onStand() {
-        setGameState("botRound");
         let botTotal = calculateHandValue(botHand);
-        const playerTotal = calculateHandValue(playerHand);
         let tempBotHand = [...botHand];
 
-        while (botTotal < playerTotal && botTotal < 21) {
+        while (botTotal < 16) {
             const card = await pullCard();
             tempBotHand.push(card);
             botTotal = calculateHandValue(tempBotHand);
         }
         setBotHand(tempBotHand);
-        checkGameStatus(playerHand, tempBotHand)
+        checkGameStatus(playerHand, tempBotHand, true)
     }
 
     const startNewGame = async () => {
@@ -151,7 +149,7 @@ export default function GameField() {
             await cardService.createDeck();
             setPlayerHand([await pullCard(), await pullCard()]);
             setBotHand([await pullCard(), await pullCard()]);
-            setGameState("playerRound");
+            setGameState("ongoing");
         } else {
             alert("Ungültiger Einsatz.");
         }
@@ -255,7 +253,7 @@ export default function GameField() {
 
                 {/* Rechts: Buttons */}
                 <Box sx={{ display: 'flex', gap: 2 }}>
-                    {betPlaced && (gameState === "playerRound") && (
+                    {betPlaced && (gameState === "ongoing") && (
                         <>
                             <Button
                                 onClick={onHit}
