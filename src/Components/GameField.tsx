@@ -20,16 +20,19 @@ function calculateHandValue(hand: string[]) {
         }
     });
 
-    // Handle aces
-    for (let i = 0; i < aces; i++) {
-        if (value + 11 <= 21) {
-            value += 11;
-        } else {
-            value += 1;
-        }
+    const addSingleAce = (value: number) => {
+        const isOver21 = value + 11 <= 21;
+        return isOver21 ? 11 : 1;
     }
+
+    // handle aces
+    if (aces > 0) {
+        value += aces - 1;
+        value += addSingleAce(value);
+    }
+
     return value;
-};
+}
 
 export default function GameField() {
     const [cardService] = useState<DeckOfCardsService>(new DeckOfCardsService())
@@ -52,14 +55,14 @@ export default function GameField() {
 
         let botTotal = calculateHandValue(botHand);
         let playerTotal = calculateHandValue(playerHand);
-        let tempBotHand = botHand;
 
+        let tempBotHand = [...botHand];
         while (botTotal < playerTotal && botTotal < 21) {
             let card = await pullCard();
             tempBotHand.push(card);
             botTotal = calculateHandValue(tempBotHand);
         }
-        setBotHand([...tempBotHand]);
+        setBotHand(tempBotHand);
     }
 
     useEffect( () => {
@@ -76,6 +79,18 @@ export default function GameField() {
     useEffect(() => {
         const playerValue = calculateHandValue(playerHand);
         const botValue = calculateHandValue(botHand);
+
+        const rules: [() => boolean, GameState][] = [
+            [() => botValue > 21, 'win'],
+            [() => playerValue > 21 || (gameState === 'botRound' && botValue > playerValue), 'lost'],
+            [() => gameState === 'botRound' && botValue === playerValue, 'tie'],
+        ];
+
+        const found = rules.find(([condition]) => condition());
+
+        const nextState = (found?.[1] ?? gameState) as GameState;
+
+        setGameState(nextState);
 
         if (botValue > 21) {
             setGameState('win');
