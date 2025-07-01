@@ -23,13 +23,17 @@ function calculateHandValue(hand: string[]) {
         }
     });
 
-    for (let i = 0; i < aces; i++) {
-        if (value + 11 <= 21) {
-            value += 11;
-        } else {
-            value += 1;
-        }
+    const addSingleAce = (value: number) => {
+        const isOver21 = value + 11 <= 21;
+        return isOver21 ? 11 : 1;
     }
+
+    // handle aces
+    if (aces > 0) {
+        value += aces - 1;
+        value += addSingleAce(value);
+    }
+
     return value;
 }
 
@@ -44,6 +48,47 @@ export default function GameField() {
     const [amount, setAmount] = useState(100);
     const [wins, setWins] = useState(0);
     const [losses, setLosses] = useState(0);
+
+    function finishGame(amount: number, wins: number, losses: number) {
+        const uid = auth.currentUser?.uid;
+        if (!uid) return;
+
+        setAmount(amount)
+        setWins(wins)
+        setLosses(losses)
+
+        const userRef = ref(db, `users/${uid}`);
+        update(userRef, { balance: amount, wins: wins, losses: losses });
+        push(ref(db, `users/${uid}/history`), { ts: Date.now(), balance: amount });
+    }
+
+    function handleLoss() {
+        setGameState('lost');
+        finishGame(amount, wins, losses + 1);
+    }
+
+    function handleTie() {
+        setGameState('tie');
+        finishGame(amount + betAmount, wins, losses);
+    }
+
+    function handleWin() {
+        setGameState('win');
+        finishGame(amount + (betAmount * 2), wins, losses);
+    }
+
+    function checkGameStatus(playerHand: string[], botHand: string[]) {
+        const playerValue = calculateHandValue(playerHand);
+        const botValue = calculateHandValue(botHand);
+
+        const rules: [() => boolean, () => void][] = [
+            [() => botValue > 21, handleWin],
+            [() => playerValue > 21 || (gameState === 'botRound' && botValue > playerValue), handleLoss],
+            [() => gameState === 'botRound' && botValue === playerValue, handleTie],
+        ];
+
+        rules.find(([condition]) => condition())?.[1]();
+    }
 
     useEffect(() => {
         const uid = auth.currentUser?.uid;
@@ -67,7 +112,9 @@ export default function GameField() {
 
     async function onHit() {
         const card = await pullCard();
-        setPlayerHand([...playerHand, card]);
+        const tempPlayerHand = [...playerHand, card];
+        setPlayerHand(tempPlayerHand);
+        checkGameStatus(tempPlayerHand, botHand)
     }
 
     async function onStand() {
@@ -82,6 +129,7 @@ export default function GameField() {
             botTotal = calculateHandValue(tempBotHand);
         }
         setBotHand(tempBotHand);
+        checkGameStatus(playerHand, tempBotHand)
     }
 
     const startNewGame = async () => {
@@ -108,40 +156,6 @@ export default function GameField() {
             alert("Ungültiger Einsatz.");
         }
     };
-
-    useEffect(() => {
-        const playerValue = calculateHandValue(playerHand);
-        const botValue = calculateHandValue(botHand);
-
-        if (botValue > 21) setGameState('win');
-        else if (playerValue > 21 || (botValue > playerValue && gameState === 'botRound')) setGameState('lost');
-        else if (playerValue === botValue && gameState === 'botRound') setGameState('tie');
-    }, [playerHand, botHand, gameState]);
-
-    useEffect(() => {
-        if (!betPlaced) return;
-        if (gameState === 'win' || gameState === 'lost' || gameState === 'tie') {
-            const uid = auth.currentUser?.uid;
-            if (!uid) return;
-            let newBalance = amount;
-            let newWins = wins;
-            let newLosses = losses;
-            if (gameState === 'win') {
-                newBalance += betAmount * 2;
-                newWins += 1;
-            } else if (gameState === 'tie') {
-                newBalance += betAmount;
-            } else {
-                newLosses += 1;
-            }
-            setAmount(newBalance);
-            setWins(newWins);
-            setLosses(newLosses);
-            const userRef = ref(db, `users/${uid}`);
-            update(userRef, { balance: newBalance, wins: newWins, losses: newLosses });
-            push(ref(db, `users/${uid}/history`), { ts: Date.now(), balance: newBalance });
-        }
-    }, [gameState]);
 
     return (
         <Box
@@ -181,6 +195,8 @@ export default function GameField() {
                 {betPlaced && (
                     <Typography sx={{ mt: 2, fontSize: '2rem' }}>
                         Einsatz: {betAmount}
+                        bot: {calculateHandValue(botHand)}
+                        player: {calculateHandValue(playerHand)}
                     </Typography>
                 )}
             </Box>
