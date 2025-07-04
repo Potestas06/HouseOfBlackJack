@@ -27,7 +27,7 @@ class DeckOfCardsService {
     return response.json();
   }
 
-  async createPartialDeck(cards: any[]) {
+  async createPartialDeck(cards: string[]) {
     const cardList = cards.join(',');
     const response = await fetch(`${this.baseUrl}/new/shuffle/?cards=${cardList}`);
     const data = await response.json();
