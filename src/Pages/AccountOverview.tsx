@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { auth, db } from "../Firebase";
-import { ref, onValue } from "firebase/database";
+import { doc, collection, getDoc, onSnapshot } from "firebase/firestore";
 
 interface HistoryEntry {
   ts: number;
