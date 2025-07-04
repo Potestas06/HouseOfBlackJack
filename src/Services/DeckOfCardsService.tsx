@@ -27,7 +27,7 @@ class DeckOfCardsService {
     return response.json();
   }
 
-  async createPartialDeck(cards) {
+  async createPartialDeck(cards: string[]) {
     const cardList = cards.join(',');
     const response = await fetch(`${this.baseUrl}/new/shuffle/?cards=${cardList}`);
     const data = await response.json();
@@ -35,32 +35,32 @@ class DeckOfCardsService {
     return data;
   }
 
-  async addToPile(pileName, cards) {
+  async addToPile(pileName: any, cards: any[]) {
     if (!this.deckId) throw new Error("No deck initialized.");
     const cardList = cards.join(',');
     const response = await fetch(`${this.baseUrl}/${this.deckId}/pile/${pileName}/add/?cards=${cardList}`);
     return response.json();
   }
 
-  async listPile(pileName) {
+  async listPile(pileName: any) {
     if (!this.deckId) throw new Error("No deck initialized.");
     const response = await fetch(`${this.baseUrl}/${this.deckId}/pile/${pileName}/list/`);
     return response.json();
   }
 
-  async drawFromPile(pileName, count = 1) {
+  async drawFromPile(pileName: any, count = 1) {
     if (!this.deckId) throw new Error("No deck initialized.");
     const response = await fetch(`${this.baseUrl}/${this.deckId}/pile/${pileName}/draw/?count=${count}`);
     return response.json();
   }
 
-  async shufflePile(pileName) {
+  async shufflePile(pileName: any) {
     if (!this.deckId) throw new Error("No deck initialized.");
     const response = await fetch(`${this.baseUrl}/${this.deckId}/pile/${pileName}/shuffle/`);
     return response.json();
   }
 
-  async returnCards(cards) {
+  async returnCards(cards: any[]) {
     if (!this.deckId) throw new Error("No deck initialized.");
     const cardList = cards.join(',');
     const response = await fetch(`${this.baseUrl}/${this.deckId}/return/?cards=${cardList}`);

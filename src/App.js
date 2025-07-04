@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthPage from "./Pages/AuthPage";
 import ProtectedRoute from "./Components/MiddleWare";
 import HomePage from "./Pages/HomePage";
+import AccountOverview from "./Pages/AccountOverview";
 
 import { auth } from "./Firebase";
 
@@ -24,6 +25,7 @@ const App = () => {
   }
 
   return (
+
     <BrowserRouter>
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
@@ -32,6 +34,14 @@ const App = () => {
           element={
             <ProtectedRoute user={user}>
               <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute user={user}>
+              <AccountOverview />
             </ProtectedRoute>
           }
         />

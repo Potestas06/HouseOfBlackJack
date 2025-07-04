@@ -1,35 +1,146 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Home from "../Components/Home";
-import GameField from "../Components/GameField";
 import LogoutButton from "../Components/LogoutButton";
+import GameField from "./GameField";
+import {
+    Box,
+    Grid,
+    IconButton,
+    Menu,
+    MenuItem,
+    Typography,
+    Tooltip,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { signOut } from "firebase/auth";
+import { auth } from "../Firebase";
+import { useNavigate } from "react-router-dom";
 
 const HomePage: React.FC = () => {
-  const [showGame, setShowGame] = useState(false);
+    const [showGame, setShowGame] = useState(false);
+    const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+    const navigate = useNavigate();
 
-  return (
-    <div
-      style={{
-        maxWidth: "600px",
-        margin: "40px auto",
-        border: "1px solid #ddd",
-        borderRadius: "6px",
-        padding: "24px",
-      }}
-    >
-      {showGame ? <GameField /> : <Home />}
-      <div style={{ textAlign: "center", marginTop: "24px" }}>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setShowGame((prev) => !prev)}
+    useEffect(() => {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = originalOverflow;
+        };
+    }, []);
+
+    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElNav(event.currentTarget);
+    };
+
+    const handleCloseNavMenu = () => {
+        setAnchorElNav(null);
+    };
+
+    const handleBackToHome = () => {
+        setShowGame(false);
+        handleCloseNavMenu();
+    };
+
+    const handleLogOut = async () => {
+        handleCloseNavMenu();
+        try {
+            await signOut(auth);
+            navigate("/auth");
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
+    };
+
+    return (
+        <Box
+            sx={{
+                height: "100vh",
+                width: "100vw",
+                overflow: "hidden",
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: showGame ? "flex-start" : "center",
+                alignItems: "center",
+                padding: showGame ? "1rem" : 0,
+            }}
         >
-          {showGame ? "Back to Home" : "Go to Gamefield"}
-        </button>
-      </div>
-      <div style={{ textAlign: "center", marginTop: "16px" }}>
-        <LogoutButton />
-      </div>
-    </div>
-  );
+            {showGame ? (
+                <GameField />
+            ) : (
+                <>
+                    <Home />
+
+                    <Grid container justifyContent="center" sx={{ mt: 4 }}>
+                        <Grid item>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => setShowGame(true)}
+                            >
+                                Go to Gamefield
+                            </button>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent="center" sx={{ mt: 2 }}>
+                        <Grid item>
+                            <LogoutButton />
+                        </Grid>
+                    </Grid>
+                </>
+            )}
+
+            {showGame && (
+                <Box sx={{ position: "absolute", top: "1rem", right: "1rem" }}>
+                    <Tooltip title="Menü öffnen">
+                        <IconButton
+                            size="large"
+                            aria-label="Menü"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleOpenNavMenu}
+                            color="inherit"
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorElNav}
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                        }}
+                        open={Boolean(anchorElNav)}
+                        onClose={handleCloseNavMenu}
+                        PaperProps={{
+                            sx: {
+                                backgroundColor: "#121212",
+                                color: "#ffffff",
+                            },
+                        }}
+                    >
+                        <MenuItem onClick={handleBackToHome}>
+                            <Typography textAlign="center">Zurück zur Startseite</Typography>
+                        </MenuItem>
+                        <MenuItem onClick={() => { window.location.href = '/account'; }}>
+                            <Typography textAlign="center">Account</Typography>
+                        </MenuItem>
+                        <MenuItem onClick={handleLogOut}>
+                            <Typography textAlign="center">Log out</Typography>
+                        </MenuItem>
+                    </Menu>
+                </Box>
+            )}
+        </Box>
+    );
 };
 
 export default HomePage;

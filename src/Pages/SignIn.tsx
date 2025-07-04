@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../Firebase.js";
-import MessageModal from "./MessageModal";
+import MessageModal from "../Components/MessageModal";
+import {useState} from "react";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");

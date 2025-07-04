@@ -1,116 +1,46 @@
-# HouseOfBlackJack
-<img src="https://github.com/user-attachments/assets/0745cea0-ea6c-4864-895f-f3cc227d2af9" alt="image" width="300">
+<div align="center">
+  <img src="public/logo512.png" alt="House of BlackJack Logo" width="200"/>
+  <h1>House of BlackJack</h1>
+  <p>
+    A web-based BlackJack game built with React, TypeScript, and Firebase.
+  </p>
+  <p>
+    <a href="https://github.com/your-username/HouseOfBlackJack-1/stargazers"><img src="https://img.shields.io/github/stars/your-username/HouseOfBlackJack-1?style=social" alt="GitHub Stars"/></a>
+    <a href="https://github.com/your-username/HouseOfBlackJack-1/network/members"><img src="https://img.shields.io/github/forks/your-username/HouseOfBlackJack-1?style=social" alt="GitHub Forks"/></a>
+  </p>
+</div>
 
+---
 
+## 🚀 About The Project
 
+**House of BlackJack** is an interactive card game where players can test their luck and skill against a bot. The project features a real-time scoreboard, user authentication, and a dynamic game interface. It is built with modern web technologies and demonstrates key software development principles.
 
-## Description
+### ✨ Features
 
-HouseOfBlackJack is a simple, web-based Blackjack game built with React and TypeScript. The goal is to provide players with a classic casino feel and implement the core rules of Blackjack in an interactive way.
+-   **Classic BlackJack Gameplay:** Hit, stand, and bet your way to victory.
+-   **Real-time Scoreboard:** Compete with other players and see your rank on the leaderboard.
+-   **User Authentication:** Secure login and registration powered by Firebase.
+-   **Functional & Declarative UI:** Built with React and TypeScript for a modern, maintainable codebase.
 
-## Features
+## 🛠️ Built With
 
-* Shuffle and deal cards
-* Player and dealer logic following traditional Blackjack rules
-* Display of score, bust status, and winner
-* Betting system (chips) with a basic wagering mechanism
-* Responsive design that runs in the browser
+-   [React](https://reactjs.org/)
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [Material-UI](https://mui.com/)
+-   [Firebase](https://firebase.google.com/)
+-   [Vite](https://vitejs.dev/)
 
-## Installation
+## 📄 M323 Competency Assessment Documentation
 
-1. Clone the repository:
+This project was developed as part of the M323 module competency assessment. The detailed documentation, which covers the implementation of functional programming concepts, can be found here:
 
-   ```bash
-   git clone https://github.com/Potestas06/HouseOfBlackJack.git
-   ```
-2. Change into the project directory:
+➡️ **[M323 Functional Programming Documentation](./doku.md)**
 
-   ```bash
-   cd HouseOfBlackJack
-   ```
-3. Install dependencies:
+---
 
-   ```bash
-   npm install
-   ```
-
-   Or, if you use Yarn:
-
-   ```bash
-   yarn
-   ```
-
-## Development
-
-* **Start local development server:**
-
-  ```bash
-  npm start
-  ```
-
-  Then open `http://localhost:3000` in your browser. The page will reload automatically when you make code changes.
-
-* **Run tests:**
-
-  ```bash
-  npm test
-  ```
-
-  Runs the built-in test runner in watch mode.
-
-* **Build for production:**
-
-  ```bash
-  npm run build
-  ```
-
-  Creates an optimized production bundle in the `build` folder, which can be deployed.
-
-## Project Structure
-
-```
-HouseOfBlackJack/
-├── public/              # Static files (HTML, icons)
-├── src/                 # Source code (components, styles, utilities)
-│   ├── components/      # Reusable React components
-│   ├── hooks/           # Custom React hooks
-│   ├── assets/          # Images, fonts, sounds
-│   ├── App.tsx          # Main entry point of the app
-│   ├── index.tsx        # Mounts React into the DOM
-│   └── ...              # Other files and folders
-├── .gitignore
-├── package.json
-└── README.md            # This file
-```
-
-## Rules and Gameplay
-
-1. At the start of the game, the player receives two cards and the dealer receives one face-up and one face-down card.
-2. The player can choose “Hit” (draw a card) or “Stand” (stop drawing cards).
-3. The goal is to get as close to 21 points as possible without going over (“bust”).
-4. The dealer follows fixed rules (must hit until at least 17 points).
-5. There is a betting system: the player starts with a predefined amount of chips and can place a bet before each round.
-
-## Contributing
-
-1. Fork the repository.
-2. Create a new branch:
-
-   ```bash
-   git checkout -b feature/my-change
-   ```
-3. Commit your changes:
-
-   ```bash
-   git commit -m "My change"
-   ```
-4. Push to the upstream branch:
-
-   ```bash
-   git push origin feature/my-change
-   ```
-5. Open a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+<div align="center">
+  <p>
+    Created with ❤️ by Team Dealer’s Nightmares💅
+  </p>
+</div>
