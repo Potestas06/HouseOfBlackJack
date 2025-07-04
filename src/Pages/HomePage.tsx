@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
         handleCloseNavMenu();
         try {
             await signOut(auth);
-            window.location.href = "/auth";
+            navigate("/auth");
         } catch (error) {
             console.error("Error during logout:", error);
         }
