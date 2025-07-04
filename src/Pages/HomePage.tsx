@@ -14,10 +14,12 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { signOut } from "firebase/auth";
 import { auth } from "../Firebase";
+import { useNavigate } from "react-router-dom";
 
 const HomePage: React.FC = () => {
     const [showGame, setShowGame] = useState(false);
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const originalOverflow = document.body.style.overflow;
