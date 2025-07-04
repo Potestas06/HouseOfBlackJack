@@ -14,61 +14,112 @@ import {
 } from "@mui/material";
 import { ExpandMore, ExpandLess, ArrowDownward, ArrowUpward, SortByAlpha } from "@mui/icons-material";
 import { db } from "../Firebase";
-import { ref, onValue } from "firebase/database";
+import { collection, onSnapshot } from "firebase/firestore";
 
-const Scoreboard: React.FC = () => {
-    const [usersData, setUsersData] = useState<{id:string;name:string;balance:number;}[]>([]);
+type UserData = {
+    id: string;
+    name: string;
+    balance: number;
+};
 
-    useEffect(() => {
-        const r = ref(db, 'users');
-        onValue(r, snap => {
-            const list: {id:string;name:string;balance:number;}[] = [];
-            snap.forEach(c => {
-                const v = c.val();
-                list.push({ id: c.key!, name: v.name || c.key, balance: v.balance || 0 });
-            });
-            list.sort((a,b) => b.balance - a.balance);
-            setUsersData(list);
-        });
-    }, []);
-
+const Scoreboard: React.FC<{ balance: number }> = ({ balance }) => {
+    const [usersData, setUsersData] = useState<UserData[]>([]);
     const [expanded, setExpanded] = useState(false);
     const [filter, setFilter] = useState('');
-    const [sortAsc, setSortAsc] = useState(true);
     const [sortByName, setSortByName] = useState(false);
+    const [sortAscending, setSortAscending] = useState(false);
 
+    // Firestore data fetching
+    useEffect(() => {
+        try {
+            const usersRef = collection(db, 'users');
+            
+            const unsubscribe = onSnapshot(usersRef, (snapshot) => {
+                const userList: UserData[] = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    userList.push({
+                        id: doc.id,
+                        name: data.name || `User_${doc.id.slice(0, 6)}`,
+                        balance: data.balance || 0
+                    });
+                });
+                
+                setUsersData(userList);
+            });
+
+            return () => unsubscribe();
+        } catch (error) {
+            console.error("Failed to setup Firestore:", error);
+        }
+    }, []);
+
+    // Event handlers
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(e.target.value);
     };
 
-    const toggleSortScore = () => {
-        setSortAsc(!sortAsc);
-        setSortByName(false);
+    const handleSortByBalance = () => {
+        if (sortByName) {
+            setSortByName(false);
+            setSortAscending(false);
+        } else {
+            setSortAscending(!sortAscending);
+        }
     };
 
-    const toggleSortName = () => {
-        setSortByName(!sortByName);
+    const handleSortByName = () => {
+        if (!sortByName) {
+            setSortByName(true);
+            setSortAscending(true);
+        } else {
+            setSortAscending(!sortAscending);
+        }
     };
 
-    let filteredUsers = usersData.filter(user =>
-        user.name.toLowerCase().includes(filter.toLowerCase())
-    );
+    const toggleExpanded = () => {
+        setExpanded(!expanded);
+    };
 
-    if (sortByName) {
-        filteredUsers.sort((a, b) =>
-            sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-        );
-    } else {
-        filteredUsers.sort((a, b) =>
-            sortAsc ? a.balance - b.balance : b.balance - a.balance
+    // Process data
+    let processedUsers = [...usersData];
+    
+    // Filter
+    if (filter.trim()) {
+        processedUsers = processedUsers.filter(user => 
+            user.name.toLowerCase().includes(filter.toLowerCase().trim())
         );
     }
-
-    const usersToShow = expanded ? filteredUsers : filteredUsers.slice(0, 3);
+    
+    // Sort
+    if (sortByName) {
+        processedUsers.sort((a, b) => {
+            const comparison = a.name.localeCompare(b.name);
+            return sortAscending ? comparison : -comparison;
+        });
+    } else {
+        processedUsers.sort((a, b) => {
+            const comparison = a.balance - b.balance;
+            return sortAscending ? comparison : -comparison;
+        });
+    }
+    
+    // Limit
+    const displayUsers = expanded ? processedUsers : processedUsers.slice(0, 3);
 
     return (
-        <Box>
-            <Typography variant="h6" align="center" gutterBottom sx={{ fontWeight: "bold", fontSize: "1rem" }}>
+        <Box sx={{ 
+            position: 'relative',
+            zIndex: 1000,
+            pointerEvents: 'auto'
+        }}>
+            <Typography 
+                variant="h6" 
+                align="center" 
+                gutterBottom 
+                sx={{ fontWeight: "bold", fontSize: "1rem" }}
+            >
                 Top Players
             </Typography>
 
@@ -89,18 +140,30 @@ const Scoreboard: React.FC = () => {
                 <Button
                     variant="outlined"
                     size="small"
-                    onClick={toggleSortScore}
-                    startIcon={sortAsc ? <ArrowUpward /> : <ArrowDownward />}
-                    sx={{ color: "white", borderColor: "#aaa", fontSize: "0.75rem" }}
+                    onClick={handleSortByBalance}
+                    startIcon={!sortByName ? (sortAscending ? <ArrowUpward /> : <ArrowDownward />) : null}
+                    sx={{ 
+                        color: "white", 
+                        borderColor: !sortByName ? "#fff" : "#aaa", 
+                        fontSize: "0.75rem",
+                        opacity: !sortByName ? 1 : 0.7,
+                        pointerEvents: 'auto'
+                    }}
                 >
                     Balance
                 </Button>
                 <Button
                     variant="outlined"
                     size="small"
-                    onClick={toggleSortName}
+                    onClick={handleSortByName}
                     startIcon={<SortByAlpha />}
-                    sx={{ color: "white", borderColor: "#aaa", fontSize: "0.75rem" }}
+                    sx={{ 
+                        color: "white", 
+                        borderColor: sortByName ? "#fff" : "#aaa", 
+                        fontSize: "0.75rem",
+                        opacity: sortByName ? 1 : 0.7,
+                        pointerEvents: 'auto'
+                    }}
                 >
                     Name
                 </Button>
@@ -116,9 +179,9 @@ const Scoreboard: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {usersToShow.map((user, idx) => (
+                        {displayUsers.map((user, index) => (
                             <TableRow key={user.id}>
-                                <TableCell sx={{ color: "#fff" }}>{idx + 1}</TableCell>
+                                <TableCell sx={{ color: "#fff" }}>{index + 1}</TableCell>
                                 <TableCell sx={{ color: "#fff" }}>{user.name}</TableCell>
                                 <TableCell sx={{ color: "#fff" }}>{user.balance}</TableCell>
                             </TableRow>
@@ -131,10 +194,15 @@ const Scoreboard: React.FC = () => {
                 <Button
                     variant="outlined"
                     size="small"
-                    onClick={() => setExpanded(!expanded)}
-                    sx={{ color: "#fff", borderColor: "#aaa", fontSize: "0.75rem" }}
+                    onClick={toggleExpanded}
+                    sx={{ 
+                        color: "#fff", 
+                        borderColor: "#aaa", 
+                        fontSize: "0.75rem",
+                        pointerEvents: 'auto'
+                    }}
                 >
-                    {expanded ? <>Weniger <ExpandLess fontSize="small" /></> : <>Mehr <ExpandMore fontSize="small" /></>}
+                    {expanded ? "Weniger" : "Mehr"} {expanded ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
                 </Button>
             </Box>
         </Box>
