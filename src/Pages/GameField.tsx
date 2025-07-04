@@ -200,7 +200,7 @@ export default function GameField() {
   }, []);
 
   useEffect(() => {
-    if (playerValue > 21) {
+    if (playerValue > 21 && phase === "playing") {
       const newBalance = balance;
       const newLosses = losses + 1;
       dispatch({
@@ -214,10 +214,10 @@ export default function GameField() {
         },
       });
     }
-  }, [playerValue, balance, losses, betAmount, wins]);
+  }, [playerValue, balance, losses, betAmount, wins, phase]);
 
   useEffect(() => {
-    if (dealerCardVisible) {
+    if (dealerCardVisible && phase === "playing") {
       const dealerTurn = async () => {
         let currentDealerHand = [...dealerHand];
         let currentDealerValue = calculateHandValue(
@@ -291,6 +291,7 @@ export default function GameField() {
     betAmount,
     wins,
     losses,
+    phase,
   ]);
 
   useEffect(() => {

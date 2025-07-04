@@ -1,4 +1,4 @@
-import { Card } from "./types";
+import { Card } from "../types";
 
 // ==================================================================================
 // Pure Functions for Game Logic
