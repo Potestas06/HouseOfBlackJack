@@ -6,7 +6,7 @@ interface ModalProps {
 }
 
 const MessageModal: React.FC<ModalProps> = ({ message, onClose }) => (
-  <div
+  <div role="dialog" aria-modal="true"
     style={{
       position: "fixed",
       top: 0,

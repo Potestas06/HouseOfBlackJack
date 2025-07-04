@@ -4,68 +4,84 @@ This document describes the implementation of functional programming concepts in
 
 ## 1. Functional Programming Enhancements
 
-The application has been enhanced with several features that demonstrate the principles of functional programming. These changes are primarily located in the `src/Components/Scoreboard.tsx` component, which now handles data processing in a functional, declarative, and immutable way.
+The application has been significantly refactored to incorporate functional programming principles. These changes are most prominent in the `src/Pages/GameField.tsx` component and its related services, which now manage the game's state and logic in a functional, declarative, and immutable way.
 
 ### 1.1. Core Concepts Applied
 
-The following functional programming concepts have been applied:
+The following functional programming concepts have been applied throughout the application:
 
--   **Pure Functions:** All data transformation logic (filtering, sorting, pagination) is implemented as pure functions. These functions have no side effects and return a new, transformed array, leaving the original data untouched.
--   **Immutability:** The application state, especially the user data, is treated as immutable. Instead of modifying data directly, pure functions create new data structures with the updated values.
--   **Higher-Order Functions:** The `pipe` function is a higher-order function that takes other functions as arguments to create a data processing pipeline. This allows for clear and concise composition of functions.
--   **Function Composition:** The `pipe` utility is used to chain together the `filterUsers`, `sortUsers`, and `paginateUsers` functions. This creates a declarative data flow where the sequence of operations is easy to read and understand.
+-   **Pure Functions:** All data transformation and game logic (card value calculation, winner determination, etc.) are implemented as pure functions. These functions have no side effects and return new, transformed data, leaving the original state untouched.
+-   **Immutability:** The application state is treated as immutable. Instead of modifying the state directly, a reducer function is used to create a new state object with the updated values.
+-   **Higher-Order Functions:** The `pipe` function in `Scoreboard.tsx` is a higher-order function that takes other functions as arguments to create a data processing pipeline.
+-   **Function Composition:** The `pipe` utility is used to chain together data transformation functions in a declarative and readable way.
+-   **State Management with Reducers:** The `useReducer` hook is used in `GameField.tsx` to manage the component's complex state. The reducer is a pure function that takes the current state and an action and returns a new state, which is a core concept in functional state management.
+-   **Separation of Concerns:** The code has been refactored to separate pure functions from those with side effects. The `GameLogic.ts` file contains only pure functions, while `GameService.ts` handles all interactions with external services like Firebase and the Deck of Cards API.
 
 ### 1.2. Code Examples
 
-Here are some concrete examples from the `Scoreboard.tsx` component that illustrate the application of these concepts.
+Here are some concrete examples from the project that illustrate the application of these concepts.
 
-#### Pure Functions for Data Transformation
+#### Functional State Management with `useReducer` in `GameField.tsx`
 
-The filtering, sorting, and pagination logic is encapsulated in pure functions. Each function takes data as input and returns a new, transformed array.
+The `GameField.tsx` component uses the `useReducer` hook to manage its state. The `gameReducer` is a pure function that handles all state transitions in a predictable and immutable way.
 
 ```typescript
-// Pure function for filtering users
-const filterUsers = (filterText: string) => (users: UserData[]): UserData[] => {
-    const trimmedFilter = filterText.trim().toLowerCase();
-    if (!trimmedFilter) {
-        return users;
-    }
-    return users.filter(user => user.name.toLowerCase().includes(trimmedFilter));
-};
+// src/Services/GameReducer.ts
 
-// Pure function for sorting users
-const sortUsers = (config: SortConfig) => (users: UserData[]): UserData[] => {
-    const sortedUsers = [...users]; // Create a copy to ensure immutability
-    // ... sorting logic ...
-    return sortedUsers;
-};
-
-// Pure function for paginating data
-const paginateUsers = (page: number, rowsPerPage: number) => (users: UserData[]): UserData[] => {
-    const start = page * rowsPerPage;
-    const end = start + rowsPerPage;
-    return users.slice(start, end);
+export const gameReducer = (state: GameState, action: GameAction): GameState => {
+  switch (action.type) {
+    case "SET_USER_DATA":
+      return { ...state, ...action.payload };
+    case "PLACE_BET":
+      return {
+        ...state,
+        balance: state.balance - action.payload,
+        betAmount: action.payload,
+      };
+    // ... other cases
+    default:
+      return state;
+  }
 };
 ```
 
-#### Function Composition with `pipe`
+#### Separation of Pure Functions and Side Effects
 
-The `pipe` higher-order function allows us to create a clean and readable data processing pipeline. The functions are executed in sequence, with the output of one function becoming the input for the next.
+The project now has a clear separation between pure functions and functions with side effects.
 
-```typescript
-// Higher-order function for function composition
-const pipe = (...fns: Function[]) => (initialValue: any) => fns.reduce((acc, fn) => fn(acc), initialValue);
+-   **`src/Services/GameLogic.ts`** contains only pure functions for calculating game state.
 
-// The data processing pipeline in the component
-const processedUsers = useMemo(() => pipe(
-    filterUsers(filter),
-    sortUsers(sortConfig)
-)(usersData), [usersData, filter, sortConfig]);
+    ```typescript
+    // src/Services/GameLogic.ts
 
-const paginatedUsers = useMemo(() => paginateUsers(currentPage, rowsPerPage)(processedUsers), [processedUsers, currentPage]);
-```
+    export const calculateHandValue = (
+      hand: Card[],
+      isDealer: boolean = false,
+      dealerCardVisible: boolean = false
+    ): number => {
+      // ... pure calculation logic
+    };
+    ```
 
-This declarative approach makes the code more readable and easier to reason about compared to an imperative approach with multiple `if` statements and temporary variables.
+-   **`src/Services/GameService.ts`** handles all side effects, such as fetching data from APIs and interacting with the database.
+
+    ```typescript
+    // src/Services/GameService.ts
+
+    export const loadUserData = async (dispatch: React.Dispatch<any>) => {
+      // ... interacts with Firebase
+    };
+
+    export const placeBet = async (
+      dispatch: React.Dispatch<any>,
+      betInput: string,
+      balance: number
+    ) => {
+      // ... interacts with the Deck of Cards API
+    };
+    ```
+
+This separation makes the code easier to test, reason about, and maintain.
 
 ## 2. Reflection
 
@@ -73,22 +89,22 @@ This declarative approach makes the code more readable and easier to reason abou
 
 The core principles of functional programming applied in this project are:
 
--   **Declarative Code:** By using function composition, we describe *what* we want to achieve (a filtered, sorted, and paginated list) rather than *how* to achieve it step-by-step.
--   **Predictability and Testability:** Pure functions are predictable. Given the same input, they will always produce the same output. This makes them easy to test in isolation without needing to mock complex dependencies or application states.
--   **Avoiding Side Effects:** The use of pure functions and immutable data structures eliminates side effects, which are a common source of bugs in complex applications. This leads to more robust and maintainable code.
+-   **Declarative Code:** By using a reducer and dispatching actions, we describe *what* should happen in the application, rather than the specific step-by-step instructions of *how* it should happen.
+-   **Predictability and Testability:** Pure functions and reducers are predictable. Given the same input, they will always produce the same output. This makes them easy to test in isolation without needing to mock complex dependencies or application states.
+-   **Avoiding Side Effects:** The use of pure functions and immutable state updates eliminates side effects, which are a common source of bugs in complex applications. This leads to more robust and maintainable code.
 
 ### 2.2. Challenges and Benefits
 
 **Challenges:**
 
--   **Initial Learning Curve:** Adopting a functional mindset requires a shift in thinking, especially when coming from an object-oriented or imperative background. Understanding concepts like higher-order functions and function composition can be challenging at first.
--   **State Management in React:** Integrating functional principles with React's state management can be tricky. It's important to ensure that state updates remain immutable, which is why tools like `useMemo` are used to re-run the processing pipeline only when necessary.
+-   **Initial Learning Curve:** Adopting a functional mindset requires a shift in thinking, especially when coming from an object-oriented or imperative background. Understanding concepts like reducers, actions, and immutability can be challenging at first.
+-   **Boilerplate:** Implementing the reducer pattern can sometimes feel like it requires more boilerplate code than using `useState`. However, this initial investment pays off in larger and more complex components.
 
 **Benefits:**
 
--   **Improved Readability:** The declarative nature of the code makes it easier to understand the intent of the data transformations.
+-   **Improved Readability:** The declarative nature of the code, combined with the clear separation of concerns, makes it easier to understand the application's logic.
 -   **Enhanced Maintainability:** With a clear separation of concerns and no side effects, the code is easier to modify and extend without introducing bugs.
--   **Better Testability:** Pure functions are trivial to unit test, which increases confidence in the correctness of the code.
--   **Reduced Complexity:** By avoiding mutable state and complex control flows, the overall complexity of the component is reduced.
+-   **Better Testability:** Pure functions and reducers are trivial to unit test, which increases confidence in the correctness of the code.
+-   **Reduced Complexity:** By centralizing state management and separating logic from side effects, the overall complexity of the application is significantly reduced.
 
 In conclusion, applying functional programming principles to the "House of BlackJack" project has resulted in a more robust, maintainable, and readable codebase. The initial investment in learning these concepts pays off by reducing complexity and improving code quality in the long run.
