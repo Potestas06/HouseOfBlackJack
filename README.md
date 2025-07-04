@@ -29,7 +29,6 @@
 -   [TypeScript](https://www.typescriptlang.org/)
 -   [Material-UI](https://mui.com/)
 -   [Firebase](https://firebase.google.com/)
--   [Vite](https://vitejs.dev/)
 
 ## 📄 M323 Competency Assessment Documentation
 
