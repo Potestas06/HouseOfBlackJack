@@ -1,12 +1,12 @@
 <div align="center">
-  <img src="public/logo512.png" alt="House of BlackJack Logo" width="200"/>
+  <img src="https://github.com/user-attachments/assets/0745cea0-ea6c-4864-895f-f3cc227d2af9" alt="image" width="200">
   <h1>House of BlackJack</h1>
   <p>
     A web-based BlackJack game built with React, TypeScript, and Firebase.
   </p>
   <p>
-    <a href="https://github.com/your-username/HouseOfBlackJack-1/stargazers"><img src="https://img.shields.io/github/stars/your-username/HouseOfBlackJack-1?style=social" alt="GitHub Stars"/></a>
-    <a href="https://github.com/your-username/HouseOfBlackJack-1/network/members"><img src="https://img.shields.io/github/forks/your-username/HouseOfBlackJack-1?style=social" alt="GitHub Forks"/></a>
+    <a href="https://github.com/Potestas06/HouseOfBlackJack/stargazers"><img src="https://img.shields.io/github/stars/Potestas06/HouseOfBlackJack?style=social" alt="GitHub Stars"/></a>
+    <a href="https://github.com/Potestas06/HouseOfBlackJack/network/members"><img src="https://img.shields.io/github/forks/Potestas06/HouseOfBlackJack?style=social" alt="GitHub Forks"/></a>
   </p>
 </div>
 
