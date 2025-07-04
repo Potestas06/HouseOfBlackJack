@@ -108,3 +108,21 @@ The core principles of functional programming applied in this project are:
 -   **Reduced Complexity:** By centralizing state management and separating logic from side effects, the overall complexity of the application is significantly reduced.
 
 In conclusion, applying functional programming principles to the "House of BlackJack" project has resulted in a more robust, maintainable, and readable codebase. The initial investment in learning these concepts pays off by reducing complexity and improving code quality in the long run.
+
+
+## 3. Use of AI
+
+**Note:** This section is intentionally informal, so we can give a genuine reflection.
+
+Even though it isn’t really necessary, I still want to point out that this project heavily utilized AI for design ideas, functional feedback, and improvement suggestions. In total, we used four different AI agents to help make this code the best it can be:
+
+- **OpenAI Codex:** We only used it at the very beginning—and yes, the code it generated was pretty rough—but it gave us a solid foundation to build on.
+
+- **Claude:** Our go-to for refactoring—offering instant feedback on what could be improved, what needed work, and step-by-step guidance on breaking the GameField into smaller components. (Note: In theory the suggestions were great, but most of the code examples it provided were downright unusable.)
+
+- **ChatGPT:** If you have more than three brain cells and are as lazy as we are, you automate as much as possible. We mainly used ChatGPT for documentation, code snippets, and more—though its code rarely fit our functional-programming style and it often ignored instructions. For documentation, however, it was awesome!
+
+- **GitHub Copilot:** We used Copilot directly in the editor for quick suggestions on repetitive tasks—boosting our speed by a serious margin—and we also enabled the built-in Copilot in GitHub for code reviews, since it gives a more “outside” perspective on our PRs. Most of the time it spotted bugs, flagged style issues, and offered handy refactoring tips, but occasionally it couldn’t see the whole picture and—tbh—was kinda dumb. Still, it saved us from overlooking a bunch of small stuff.
+
+**summary:**
+In short, AI is awesome—and anyone who says you shouldn’t use it is even dumber than the AIs themselves. It’s a killer way to code faster and more efficiently, but you actually have to understand what it’s doing, or you’ll run into big problems sooner or later. For our next project, we’ll definitely keep using AI—and lean on it even more if possible. I mean, why wouldn’t you? It’s like saying “no thanks” to the wheel because it makes you lazy. Sure, it can make you lazy—but it also makes you way faster, helps you grasp concepts more easily, and saves you from getting yelled at on StackOverflow for using Node.js instead of Deno or whatever.
