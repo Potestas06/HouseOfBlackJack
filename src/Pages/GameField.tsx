@@ -365,11 +365,7 @@ export default function GameField() {
           marginBottom: "1rem",
         }}
       >
-        {phase !== "betting" && (
-          <Typography sx={{ mt: 2, fontSize: "2rem" }}>
-            Bet: {betAmount} | Dealer: {dealerValue} | Player: {playerValue}
-          </Typography>
-        )}
+        
       </Box>
 
       <Box
