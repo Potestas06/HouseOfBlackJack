@@ -3,10 +3,7 @@ import * as React from "react";
 import Scoreboard from "../Components/Scoreboard";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import MessageModal from "../Components/MessageModal";
-import {
-  calculateHandValue,
-  determineWinner,
-} from "../Services/GameLogic";
+import { calculateHandValue, determineWinner } from "../Services/GameLogic";
 import { gameReducer } from "../Services/GameReducer";
 import {
   loadUserData,
@@ -28,6 +25,7 @@ const initialState: GameState = {
   dealerCardVisible: false,
   modalMessage: null,
   betInput: "",
+  showAddFundsModal: false,
 };
 
 // ==================================================================================
@@ -84,7 +82,10 @@ const CardComponent = React.memo(
     );
 
     return (
-      <div className={`card ${isFlipped ? "is-flipped" : ""}`} style={cardStyle}>
+      <div
+        className={`card ${isFlipped ? "is-flipped" : ""}`}
+        style={cardStyle}
+      >
         <div className="card-inner" style={innerStyle}>
           <div className="card-front" style={cardFaceStyle}>
             <img
@@ -198,11 +199,15 @@ export default function GameField() {
     dealerCardVisible,
     modalMessage,
     betInput,
+    showAddFundsModal,
   } = state;
 
   const cardService = useMemo(() => new DeckOfCardsService(), []);
 
-  const playerValue = useMemo(() => calculateHandValue(playerHand), [playerHand]);
+  const playerValue = useMemo(
+    () => calculateHandValue(playerHand),
+    [playerHand]
+  );
   const dealerValue = useMemo(
     () => calculateHandValue(dealerHand, true, dealerCardVisible),
     [dealerHand, dealerCardVisible]
@@ -279,11 +284,7 @@ export default function GameField() {
           },
         };
 
-        const result = outcome.isWin
-          ? "win"
-          : outcome.isLoss
-          ? "loss"
-          : "tie";
+        const result = outcome.isWin ? "win" : outcome.isLoss ? "loss" : "tie";
 
         dispatch({
           type: "END_GAME",
@@ -349,10 +350,7 @@ export default function GameField() {
         isDealer={true}
         dealerCardVisible={dealerCardVisible}
       />
-      <CardStack
-        onCardDrawn={() => playerHits(dispatch)}
-        phase={phase}
-      />
+      <CardStack onCardDrawn={() => playerHits(dispatch)} phase={phase} />
       <Hand cards={playerHand} isDealer={false} dealerCardVisible={false} />
 
       <Box
@@ -364,9 +362,7 @@ export default function GameField() {
           alignItems: "center",
           marginBottom: "1rem",
         }}
-      >
-        
-      </Box>
+      ></Box>
 
       <Box
         sx={{
@@ -460,9 +456,15 @@ export default function GameField() {
               />
             </>
           )}
-          {phase === "gameOver" && (
+          {(balance === 0 && phase === "betting") || phase === "gameOver" ? (
             <Button
-              onClick={() => dispatch({ type: "RESET_GAME" })}
+              onClick={() => {
+                if (balance === 0 && phase === "betting") {
+                  dispatch({ type: "TOGGLE_ADD_FUNDS_MODAL", payload: true });
+                } else if (phase === "gameOver") {
+                  dispatch({ type: "RESET_GAME" });
+                }
+              }}
               sx={{
                 width: 130,
                 height: 130,
@@ -470,10 +472,32 @@ export default function GameField() {
                 backgroundImage: "url(/blackChip.png)",
                 backgroundSize: "cover",
               }}
-            />
-          )}
+            >
+              {/* {balance === 0 && phase === "betting" ? "Add Funds" : "New Game"} */}
+            </Button>
+          ) : null}
         </Box>
       </Box>
+      {showAddFundsModal && (
+        <MessageModal
+          message={
+            <Box>
+              <img
+                src="/redChip.png"
+                alt="Placeholder"
+                style={{ width: "100px", height: "100px" }}
+              />
+              <Typography variant="h6">
+                2000 has been added to your account!
+              </Typography>
+            </Box>
+          }
+          onClose={() => {
+            dispatch({ type: "ADD_FUNDS", payload: 2000 });
+            dispatch({ type: "TOGGLE_ADD_FUNDS_MODAL", payload: false });
+          }}
+        />
+      )}
     </Box>
   );
 }

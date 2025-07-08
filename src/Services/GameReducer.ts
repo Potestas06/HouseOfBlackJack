@@ -45,7 +45,10 @@ const handlers: { [T in GameAction["type"]]: Handler<T> } = {
     dealerCardVisible: false,
     modalMessage: null,
     betInput: "",
+    showAddFundsModal: false,
   }),
+  ADD_FUNDS: (s, action) => ({ ...s, balance: s.balance + action.payload }),
+  TOGGLE_ADD_FUNDS_MODAL: (s, action) => ({ ...s, showAddFundsModal: action.payload }),
 };
 
 export const gameReducer = (

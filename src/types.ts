@@ -16,6 +16,7 @@ export type GameState = {
   dealerCardVisible: boolean;
   modalMessage: string | null;
   betInput: string;
+  showAddFundsModal: boolean;
 };
 
 export type GameAction =
@@ -27,4 +28,6 @@ export type GameAction =
   | { type: "DEALER_HITS"; payload: Card }
   | { type: "END_GAME"; payload: { outcome: "win" | "loss" | "tie"; message: string; newBalance: number; newWins: number; newLosses: number } }
   | { type: "RESET_GAME" }
-  | { type: "UPDATE_BET_INPUT"; payload: string };
+  | { type: "UPDATE_BET_INPUT"; payload: string }
+  | { type: "ADD_FUNDS"; payload: number }
+  | { type: "TOGGLE_ADD_FUNDS_MODAL"; payload: boolean };
