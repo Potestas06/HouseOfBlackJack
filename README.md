@@ -2,7 +2,7 @@
   <img src="https://github.com/user-attachments/assets/0745cea0-ea6c-4864-895f-f3cc227d2af9" alt="image" width="200">
   <h1>House of BlackJack</h1>
   <p>
-    A web-based BlackJack game built with React, TypeScript, and Firebase.
+    A web-based BlackJack game built with React, TypeScript, and Firebase, with a focus on functional programming principles.
   </p>
   <p>
     <a href="https://github.com/Potestas06/HouseOfBlackJack/stargazers"><img src="https://img.shields.io/github/stars/Potestas06/HouseOfBlackJack?style=social" alt="GitHub Stars"/></a>

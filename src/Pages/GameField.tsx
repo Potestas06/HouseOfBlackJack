@@ -7,15 +7,28 @@ import {
   calculateHandValue,
   determineWinner,
 } from "../Services/GameLogic";
-import { gameReducer, initialState } from "../Services/GameReducer";
+import { gameReducer } from "../Services/GameReducer";
 import {
   loadUserData,
   placeBet,
   playerHits,
   saveGameResult,
 } from "../Services/GameService";
-import { Card, GamePhase } from "../types";
+import { Card, GamePhase, GameState } from "../types";
 import DeckOfCardsService from "../Services/DeckOfCardsService";
+
+const initialState: GameState = {
+  phase: "betting",
+  playerHand: [],
+  dealerHand: [],
+  betAmount: 0,
+  balance: 2000,
+  wins: 0,
+  losses: 0,
+  dealerCardVisible: false,
+  modalMessage: null,
+  betInput: "",
+};
 
 // ==================================================================================
 // UI Components
@@ -245,40 +258,37 @@ export default function GameField() {
           true
         );
 
-        if (outcome.isWin) {
-          dispatch({
-            type: "END_GAME",
-            payload: {
-              outcome: "win",
-              message: `You Won ${betAmount * 2}`,
-              newBalance: balance + betAmount * 2,
-              newWins: wins + 1,
-              newLosses: losses,
-            },
-          });
-        } else if (outcome.isLoss) {
-          dispatch({
-            type: "END_GAME",
-            payload: {
-              outcome: "loss",
-              message: `You Lost ${betAmount}`,
-              newBalance: balance,
-              newWins: wins,
-              newLosses: losses + 1,
-            },
-          });
-        } else {
-          dispatch({
-            type: "END_GAME",
-            payload: {
-              outcome: "tie",
-              message: "It's a Tie!",
-              newBalance: balance + betAmount,
-              newWins: wins,
-              newLosses: losses,
-            },
-          });
-        }
+        const outcomeMapping = {
+          win: {
+            message: `You Won ${betAmount * 2}`,
+            newBalance: balance + betAmount * 2,
+            newWins: wins + 1,
+            newLosses: losses,
+          },
+          loss: {
+            message: `You Lost ${betAmount}`,
+            newBalance: balance,
+            newWins: wins,
+            newLosses: losses + 1,
+          },
+          tie: {
+            message: "It's a Tie!",
+            newBalance: balance + betAmount,
+            newWins: wins,
+            newLosses: losses,
+          },
+        };
+
+        const result = outcome.isWin
+          ? "win"
+          : outcome.isLoss
+          ? "loss"
+          : "tie";
+
+        dispatch({
+          type: "END_GAME",
+          payload: { ...outcomeMapping[result] },
+        });
       };
       dealerTurn();
     }

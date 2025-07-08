@@ -1,67 +1,57 @@
 import { GameState, GameAction } from "../types";
 
-export const initialState: GameState = {
-  phase: "betting",
-  playerHand: [],
-  dealerHand: [],
-  betAmount: 0,
-  balance: 2000,
-  wins: 0,
-  losses: 0,
-  dealerCardVisible: false,
-  modalMessage: null,
-  betInput: "",
+type Handler<K extends GameAction["type"]> = (
+  state: GameState,
+  action: Extract<GameAction, { type: K }>
+) => GameState;
+
+const handlers: { [T in GameAction["type"]]: Handler<T> } = {
+  SET_USER_DATA: (s, action) => ({ ...s, ...action.payload }),
+  UPDATE_BET_INPUT: (s, action) => ({ ...s, betInput: action.payload }),
+  PLACE_BET: (s, action) => ({
+    ...s,
+    balance: s.balance - action.payload,
+    betAmount: action.payload,
+  }),
+  START_GAME: (s, action) => ({
+    ...s,
+    phase: "playing",
+    playerHand: action.payload.playerHand,
+    dealerHand: action.payload.dealerHand,
+  }),
+  PLAYER_HITS: (s, action) => ({
+    ...s,
+    playerHand: [...s.playerHand, action.payload],
+  }),
+  DEALER_REVEALS: (s) => ({ ...s, dealerCardVisible: true }),
+  DEALER_HITS: (s, action) => ({
+    ...s,
+    dealerHand: [...s.dealerHand, action.payload],
+  }),
+  END_GAME: (s, action) => ({
+    ...s,
+    phase: "gameOver",
+    modalMessage: action.payload.message,
+    balance: action.payload.newBalance,
+    wins: action.payload.newWins,
+    losses: action.payload.newLosses,
+  }),
+  RESET_GAME: (s) => ({
+    ...s,
+    phase: "betting",
+    playerHand: [],
+    dealerHand: [],
+    betAmount: 0,
+    dealerCardVisible: false,
+    modalMessage: null,
+    betInput: "",
+  }),
 };
 
-export const gameReducer = (state: GameState, action: GameAction): GameState => {
-  switch (action.type) {
-    case "SET_USER_DATA":
-      return { ...state, ...action.payload };
-    case "UPDATE_BET_INPUT":
-      return { ...state, betInput: action.payload };
-    case "PLACE_BET":
-      return {
-        ...state,
-        balance: state.balance - action.payload,
-        betAmount: action.payload,
-      };
-    case "START_GAME":
-      return {
-        ...state,
-        phase: "playing",
-        playerHand: action.payload.playerHand,
-        dealerHand: action.payload.dealerHand,
-      };
-    case "PLAYER_HITS":
-      return {
-        ...state,
-        playerHand: [...state.playerHand, action.payload],
-      };
-    case "DEALER_REVEALS":
-      return { ...state, dealerCardVisible: true };
-    case "DEALER_HITS":
-      return { ...state, dealerHand: [...state.dealerHand, action.payload] };
-    case "END_GAME":
-      return {
-        ...state,
-        phase: "gameOver",
-        modalMessage: action.payload.message,
-        balance: action.payload.newBalance,
-        wins: action.payload.newWins,
-        losses: action.payload.newLosses,
-      };
-    case "RESET_GAME":
-      return {
-        ...state,
-        phase: "betting",
-        playerHand: [],
-        dealerHand: [],
-        betAmount: 0,
-        dealerCardVisible: false,
-        modalMessage: null,
-        betInput: "",
-      };
-    default:
-      return state;
-  }
+export const gameReducer = (
+  state: GameState,
+  action: GameAction
+): GameState => {
+  const fn = handlers[action.type];
+  return fn ? fn(state, action as any) : state;
 };

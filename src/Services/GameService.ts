@@ -17,14 +17,16 @@ export const loadUserData = async (dispatch: React.Dispatch<any>) => {
   if (user) {
     const userDocRef = doc(db, "users", user.uid);
     const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      const data = userDoc.data();
+    const userDocSnap = await getDoc(userDocRef);
+    const userData = userDocSnap.data();
+
+    if (userData) {
       dispatch({
         type: "SET_USER_DATA",
         payload: {
-          balance: data.balance ?? 2000,
-          wins: data.wins ?? 0,
-          losses: data.losses ?? 0,
+          balance: userData.balance ?? 2000,
+          wins: userData.wins ?? 0,
+          losses: userData.losses ?? 0,
         },
       });
     } else {
@@ -55,20 +57,18 @@ export const placeBet = async (
   balance: number
 ) => {
   const parsedBet = Number(betInput);
-  if (parsedBet > 0 && parsedBet <= balance) {
-    dispatch({ type: "PLACE_BET", payload: parsedBet });
-    await cardService.createDeck();
-    const [player, dealer] = await Promise.all([
-      cardService.drawCards(2),
-      cardService.drawCards(2),
-    ]);
-    dispatch({
-      type: "START_GAME",
-      payload: { playerHand: player.cards, dealerHand: dealer.cards },
-    });
-  } else {
-    alert("Invalid bet amount.");
-  }
+  if (parsedBet <= 0 || parsedBet > balance) return;
+
+  dispatch({ type: "PLACE_BET", payload: parsedBet });
+  await cardService.createDeck();
+  const [player, dealer] = await Promise.all([
+    cardService.drawCards(2),
+    cardService.drawCards(2),
+  ]);
+  dispatch({
+    type: "START_GAME",
+    payload: { playerHand: player.cards, dealerHand: dealer.cards },
+  });
 };
 
 export const playerHits = async (dispatch: React.Dispatch<any>) => {

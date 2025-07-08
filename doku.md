@@ -15,6 +15,7 @@ The following functional programming concepts have been applied throughout the a
 -   **Higher-Order Functions:** The `pipe` function in `Scoreboard.tsx` is a higher-order function that takes other functions as arguments to create a data processing pipeline.
 -   **Function Composition:** The `pipe` utility is used to chain together data transformation functions in a declarative and readable way.
 -   **State Management with Reducers:** The `useReducer` hook is used in `GameField.tsx` to manage the component's complex state. The reducer is a pure function that takes the current state and an action and returns a new state, which is a core concept in functional state management.
+-   **Functional Components:** All React components have been written as functional components using hooks, including the `AuthPage.tsx`, which was converted from a class-based component.
 -   **Separation of Concerns:** The code has been refactored to separate pure functions from those with side effects. The `GameLogic.ts` file contains only pure functions, while `GameService.ts` handles all interactions with external services like Firebase and the Deck of Cards API.
 
 ### 1.2. Code Examples
@@ -28,20 +29,35 @@ The `GameField.tsx` component uses the `useReducer` hook to manage its state. Th
 ```typescript
 // src/Services/GameReducer.ts
 
-export const gameReducer = (state: GameState, action: GameAction): GameState => {
-  switch (action.type) {
-    case "SET_USER_DATA":
-      return { ...state, ...action.payload };
-    case "PLACE_BET":
-      return {
-        ...state,
-        balance: state.balance - action.payload,
-        betAmount: action.payload,
-      };
-    // ... other cases
-    default:
-      return state;
-  }
+export const gameReducer = (
+  state: GameState,
+  action: GameAction
+): GameState => {
+  const fn = handlers[action.type];
+  return fn ? fn(state, action as any) : state;
+};
+```
+
+#### Refactoring `AuthPage.tsx` to a Functional Component
+
+The `AuthPage.tsx` was refactored from a class-based component to a functional component using the `useState` hook to manage its state.
+
+```typescript
+// src/Pages/AuthPage.tsx (Refactored)
+
+import React, { useState } from "react";
+// ... other imports
+
+const AuthPage: React.FC = () => {
+  const [isLogin, setIsLogin] = useState(true);
+
+  const toggleAuth = () => {
+    setIsLogin((prevIsLogin) => !prevIsLogin);
+  };
+
+  return (
+    // ... JSX
+  );
 };
 ```
 
