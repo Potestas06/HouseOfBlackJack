@@ -402,11 +402,21 @@ export default function GameField() {
                   })
                 }
                 inputProps={{ min: 1, max: balance }}
+                error={!(Number(betInput) > 0 && Number(betInput) <= balance)}
+                helperText={
+                  !(Number(betInput) > 0 && Number(betInput) <= balance)
+                    ? "Invalid bet"
+                    : ""
+                }
                 sx={{
                   input: { color: "white" },
                   "& .MuiOutlinedInput-root": {
                     "& fieldset": {
-                      borderColor: "white",
+                      borderColor: !(
+                        Number(betInput) > 0 && Number(betInput) <= balance
+                      )
+                        ? "red"
+                        : "white",
                     },
                   },
                   width: 100,
