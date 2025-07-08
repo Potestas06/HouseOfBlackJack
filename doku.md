@@ -123,7 +123,9 @@ The core principles of functional programming applied in this project are:
 -   **Better Testability:** Pure functions and reducers are trivial to unit test, which increases confidence in the correctness of the code.
 -   **Reduced Complexity:** By centralizing state management and separating logic from side effects, the overall complexity of the application is significantly reduced.
 
-In conclusion, applying functional programming principles to the "House of BlackJack" project has resulted in a more robust, maintainable, and readable codebase. The initial investment in learning these concepts pays off by reducing complexity and improving code quality in the long run.
+In conclusion, applying functional programming principles to the House of BlackJack project has led to a more robust, maintainable, and readable codebase. The initial investment in learning these concepts has paid off by reducing complexity and improving long-term code quality.
+That said, implementing them was still painful—mainly because we introduced functional patterns after already having a working, non-functional codebase. Refactoring everything with a completely new mindset was tough. It’s like tearing down a house just to rebuild it with different tools.
+(It’s hard, man 😢)
 
 
 ## 3. Use of AI
