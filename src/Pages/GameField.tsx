@@ -456,14 +456,10 @@ export default function GameField() {
               />
             </>
           )}
-          {(balance === 0 && phase === "betting") || phase === "gameOver" ? (
+          {balance === 0 && phase === "betting" ? (
             <Button
               onClick={() => {
-                if (balance === 0 && phase === "betting") {
-                  dispatch({ type: "TOGGLE_ADD_FUNDS_MODAL", payload: true });
-                } else if (phase === "gameOver") {
-                  dispatch({ type: "RESET_GAME" });
-                }
+                dispatch({ type: "TOGGLE_ADD_FUNDS_MODAL", payload: true });
               }}
               sx={{
                 width: 130,
@@ -473,7 +469,7 @@ export default function GameField() {
                 backgroundSize: "cover",
               }}
             >
-              {/* {balance === 0 && phase === "betting" ? "Add Funds" : "New Game"} */}
+              {/* Add Funds */}
             </Button>
           ) : null}
         </Box>
@@ -483,7 +479,7 @@ export default function GameField() {
           message={
             <Box>
               <img
-                src="/redChip.png"
+                src="/money.jpg"
                 alt="Placeholder"
                 style={{ width: "100px", height: "100px" }}
               />
